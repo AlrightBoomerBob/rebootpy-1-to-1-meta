@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import json
 
 import datetime
 import asyncio
@@ -3493,6 +3494,7 @@ class Client(BasicClient):
 
             config = {**cf, **data['config']}
             party = self.construct_party(data)
+            
             await party._update_members(
                 members=data['members'],
                 priority=priority
@@ -3518,8 +3520,7 @@ class Client(BasicClient):
                     **default_schema,
                     **updated,
                     **edit_updated,
-                    **party._construct_raw_squad_assignments(),
-                    **party.meta.set_voicechat_implementation('EOSVoiceChat')
+                    **party._construct_raw_squad_assignments()
                 },
                 deleted=[*deleted, *edit_deleted],
                 priority=priority,

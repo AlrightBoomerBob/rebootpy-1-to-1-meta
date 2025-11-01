@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-__version__ = '0.9.6'
+__version__ = '0.9.5'
 
 from .client import (BasicClient, Client, run_multiple, start_multiple,
                      close_multiple)
@@ -37,7 +37,8 @@ from .message import FriendMessage, PartyMessage
 from .party import (DefaultPartyConfig, DefaultPartyMemberConfig, PartyMember,
                     ClientPartyMember, Party,  ClientParty,
                     ReceivedPartyInvitation, SentPartyInvitation,
-                    PartyJoinConfirmation, PartyJoinRequest, SquadAssignment)
+                    PartyJoinConfirmation, PartyJoinRequest, SquadAssignment,
+                    PlaylistRequest)
 from .presence import Presence, PresenceGameplayStats, PresenceParty
 from .user import (ClientUser, User, BlockedUser, ExternalAuth,
                    UserSearchEntry, SacSearchEntryUser)
@@ -51,3 +52,7 @@ from .playlist import Playlist
 from .avatar import Avatar
 from .http import HTTPRetryConfig, Route
 from .utils import *
+import json
+import functools
+
+json.dumps = functools.partial(json.dumps, separators=(',', ':'))

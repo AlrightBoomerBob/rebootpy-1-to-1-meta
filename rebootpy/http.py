@@ -1439,7 +1439,7 @@ class HTTPClient:
             user_id=user_id,
         )
         return await self.post(r)
-
+    #check
     async def party_send_invite(self, party_id: str,
                                 user_id: str,
                                 send_ping: bool = True) -> Any:
@@ -1474,6 +1474,7 @@ class HTTPClient:
     # NOTE: Deprecated since fortnite v11.30. Use param sendPing=True with
     #       send_invite
     # NOTE: Now used for sending invites from private parties
+    #check
     async def party_send_ping(self, user_id: str) -> Any:
         r = PartyService(
             '/party/api/v1/Fortnite/user/{user_id}/pings/{client_id}',
@@ -1533,7 +1534,7 @@ class HTTPClient:
             user_id=user_id
         )
         return await self.delete(r)
-
+    #check
     async def party_leave(self, party_id: str, **kwargs: Any) -> Any:
         conn_type = self.client.default_party_member_config.cls.CONN_TYPE
         payload = {
@@ -1560,7 +1561,7 @@ class HTTPClient:
             client_id=self.client.user.id
         )
         return await self.delete(r, json=payload, **kwargs)
-
+    #check
     async def party_join_request(self, party_id: str) -> Any:
         conf = self.client.default_party_member_config
         conn_type = conf.cls.CONN_TYPE
@@ -1599,7 +1600,7 @@ class HTTPClient:
             client_id=self.client.user.id
         )
         return await self.post(r, json=payload)
-
+    #check
     async def party_send_intention(self, user_id: str) -> dict:
         payload = {
             'urn:epic:invite:platformdata_s': '',
@@ -1638,6 +1639,7 @@ class HTTPClient:
         _chat_enabled = str(config['chat_enabled']).lower()
         payload = {
             'config': {
+                'discoverability': config['discoverability'],
                 'join_confirmation': config['join_confirmation'],
                 'joinability': config['joinability'],
                 'max_size': config['max_size']
@@ -1646,25 +1648,27 @@ class HTTPClient:
                 'connection': {
                     'id': str(self.client.xmpp.xmpp_client.local_jid),
                     'meta': {
-                        'urn:epic:conn:platform_s': self.client.platform.value,
-                        'urn:epic:conn:type_s': conn_type
-                    },
-                    'yield_leadership': conf.yield_leadership,
-                    'offline_ttl': conf.offline_ttl,
-                },
+                        'urn:epic:conn:platform_s': self.client.platform.value
+                    }
+                } ,               
+                'meta': {
+                    'urn:epic:member:dn_s': self.client.user.display_name
+                }
             },
             'meta': {
-                'urn:epic:cfg:accepting-members_b': False,
+                'urn:epic:cfg:accepting-members_b': "false",
                 'urn:epic:cfg:build-id_s': str(self.client.party_build_id),
-                'urn:epic:cfg:can-join_b': True,
+                'urn:epic:cfg:can-join_b': "true",
                 'urn:epic:cfg:chat-enabled_b': _chat_enabled,
                 'urn:epic:cfg:invite-perm_s': 'Noone',
                 'urn:epic:cfg:join-request-action_s': 'Manual',
-                'urn:epic:cfg:not-accepting-members-reason_i': 0,
+                'urn:epic:cfg:not-accepting-members-reason_i': "0",
                 'urn:epic:cfg:party-type-id_s': 'default',
                 'urn:epic:cfg:presence-perm_s': 'Noone',
             }
         }
+        with open("debug.txt", "w") as f:
+            f.write(json.dumps(payload))
 
         r = PartyService('/party/api/v1/Fortnite/parties')
         return await self.post(r, json=payload, **kwargs)
@@ -1680,9 +1684,12 @@ class HTTPClient:
         payload = {
             'delete': deleted_meta,
             'update': updated_meta,
-            'override': overridden_meta,
-            'revision': revision,
+            'revision': revision
         }
+        with open("memberMeta.txt", "r") as f:
+            memberMeta = f.read()
+        with open("memberMeta.txt", "w") as f:
+            f.write(memberMeta + "\n\n" + json.dumps(payload))
 
         r = PartyService(
             ('/party/api/v1/Fortnite/parties/{party_id}/members/'
@@ -1702,14 +1709,17 @@ class HTTPClient:
         payload = {
             'meta': {
                 'delete': deleted_meta,
-                'update': updated_meta,
-                'override': overridden_meta
+                'update': updated_meta
             },
             'revision': revision,
         }
 
         if config:
             payload['config'] = config
+        with open("partyMeta.txt", "r") as f:
+            partyMeta = f.read()
+        with open("partyMeta.txt", "w") as f:
+            f.write(partyMeta + "\n\n" + json.dumps(payload))
 
         r = PartyService('/party/api/v1/Fortnite/parties/{party_id}',
                          party_id=party_id)

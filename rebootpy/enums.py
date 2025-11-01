@@ -101,10 +101,10 @@ class PartyPrivacy(Enum):
     }
     PRIVATE = {
         'partyType': 'Private',
-        'inviteRestriction': 'LeaderOnly',
-        'onlyLeaderFriendsCanJoin': True,
+        'inviteRestriction': 'AnyMember',
+        'onlyLeaderFriendsCanJoin': False,
         'presencePermission': 'Noone',
-        'invitePermission': 'Leader',
+        'invitePermission': 'Anyone',
         'acceptingMembers': False,
     }
 
