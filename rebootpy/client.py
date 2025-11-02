@@ -3542,6 +3542,7 @@ class Client(BasicClient):
     async def _join_party(self, party_data: dict, *,
                           event: str = 'party_member_join') -> ClientParty:
         async with self._internal_join_party_lock:
+            leader = str([member['account_id'] for member in party_data['members'] if member['role'] == 'CAPTAIN'][0])
             party = self.construct_party(party_data)
             await party._update_members(party_data['members'])
             self.party = party
@@ -3558,7 +3559,7 @@ class Client(BasicClient):
             )
 
             try:
-                await self.http.party_join_request(party.id)
+                await self.http.party_join_request(leader)
             except HTTPException as e:
                 if not future.cancelled():
                     future.cancel()

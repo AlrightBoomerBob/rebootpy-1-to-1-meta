@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import uuid
 import aiohttp
 import asyncio
 import logging
@@ -487,6 +488,7 @@ class HTTPClient:
             pass
 
         pre_time = time.time()
+        #, proxy='http://localhost:8888'
         async with self.__session.request(method, url, **kwargs) as r:
             log.debug('{0} {1} has returned {2.status} in {3:.2f}s'.format(
                 method,
@@ -1439,7 +1441,7 @@ class HTTPClient:
             user_id=user_id,
         )
         return await self.post(r)
-    #check
+    
     async def party_send_invite(self, party_id: str,
                                 user_id: str,
                                 send_ping: bool = True) -> Any:
@@ -1447,8 +1449,7 @@ class HTTPClient:
         payload = {
             'urn:epic:cfg:build-id_s': self.client.party_build_id,
             'urn:epic:conn:platform_s': self.client.platform.value,
-            'urn:epic:conn:type_s': conn_type,
-            'urn:epic:invite:platformdata_s': '',
+            'urn:epic:invite:platformdata_s': 'guid=' + uuid.uuid4().hex.upper(),
             'urn:epic:member:dn_s': self.client.user.display_name,
         }
 
@@ -1474,7 +1475,7 @@ class HTTPClient:
     # NOTE: Deprecated since fortnite v11.30. Use param sendPing=True with
     #       send_invite
     # NOTE: Now used for sending invites from private parties
-    #check
+    
     async def party_send_ping(self, user_id: str) -> Any:
         r = PartyService(
             '/party/api/v1/Fortnite/user/{user_id}/pings/{client_id}',
@@ -1534,46 +1535,25 @@ class HTTPClient:
             user_id=user_id
         )
         return await self.delete(r)
-    #check
+    
     async def party_leave(self, party_id: str, **kwargs: Any) -> Any:
-        conn_type = self.client.default_party_member_config.cls.CONN_TYPE
-        payload = {
-            'connection': {
-                'id': self.client.user.jid,
-                'meta': {
-                    'urn:epic:conn:platform_s': self.client.platform.value,
-                    'urn:epic:conn:type_s': conn_type,
-                },
-            },
-            'meta': {
-                'urn:epic:member:dn_s': self.client.user.display_name,
-                'urn:epic:member:type_s': conn_type,
-                'urn:epic:member:platform_s': self.client.platform.value,
-                'urn:epic:member:joinrequest_j': json.dumps({
-                    'CrossplayPreference_i': '1'
-                }),
-            }
-        }
 
         r = PartyService(
             '/party/api/v1/Fortnite/parties/{party_id}/members/{client_id}',
             party_id=party_id,
             client_id=self.client.user.id
         )
-        return await self.delete(r, json=payload, **kwargs)
-    #check
-    async def party_join_request(self, party_id: str) -> Any:
+        return await self.delete(r, **kwargs)
+    
+    async def party_join_request(self, leader_id: str) -> Any:
         conf = self.client.default_party_member_config
         conn_type = conf.cls.CONN_TYPE
         payload = {
             'connection': {
                 'id': str(self.client.xmpp.xmpp_client.local_jid),
                 'meta': {
-                    'urn:epic:conn:platform_s': self.client.platform.value,
-                    'urn:epic:conn:type_s': conn_type,
-                },
-                'yield_leadership': conf.yield_leadership,
-                'offline_ttl': conf.offline_ttl,
+                    'urn:epic:conn:platform_s': self.client.platform.value
+                }
             },
             'meta': {
                 'urn:epic:member:dn_s': self.client.user.display_name,
@@ -1584,26 +1564,21 @@ class HTTPClient:
                             'dn': self.client.user.display_name,
                             'plat': self.client.platform.value,
                             'data': json.dumps({
-                                'CrossplayPreference': '1',
+                                'CrossplayPreference_i': '1',
                                 'SubGame_u': '1',
                             })
                         }
                     ]
-                }),
-            },
+                })
+            }
         }
 
-        r = PartyService(
-            ('/party/api/v1/Fortnite/parties/{party_id}/members/'
-             '{client_id}/join'),
-            party_id=party_id,
-            client_id=self.client.user.id
-        )
+        r = PartyService(f'/party/api/v1/Fortnite/user/{self.client.user.id}/pings/{leader_id}/join')
         return await self.post(r, json=payload)
-    #check
+    
     async def party_send_intention(self, user_id: str) -> dict:
         payload = {
-            'urn:epic:invite:platformdata_s': '',
+            'urn:epic:invite:platformdata_s': 'RequestToJoin,guid=' + uuid.uuid4().hex.upper(),
         }
 
         r = PartyService(

@@ -780,10 +780,10 @@ class PartyMemberMeta(MetaBase):
                         "timestamp": 0
                     },
                     "islandSelection": {
-                        "bUsingGracefulUpgrade": False,
+                        "bUsingGracefulUpgrade": True,
                         "island": {
                             "linkId": {
-                                "mnemonic": "playlist_defaultsquad",
+                                "mnemonic": "playlist_showdown_cts_solo",
                                 "version": -1
                             },
                             "privacy": "NoFill",
@@ -2273,6 +2273,83 @@ class ClientPartyMember(PartyMemberBase, Patchable):
     def do_on_member_join_patch(self) -> None:
         async def patcher():
             try:
+                if len(self.party._members) == 1:
+                    suffix = "solo"
+                elif len(self.party._members) == 2:
+                    suffix = "duos"
+                elif len(self.party._members) == 3:
+                    suffix = "trios"
+                else:
+                    suffix = "squads"
+                patch = {
+                "Default:MatchmakingInfo_j": json.dumps({
+                    "MatchmakingInfo": {
+                        "bIsEligible": True,
+                        "currentIsland": {
+                            "bUsingGracefulUpgrade": True,
+                            "island": {
+                                "linkId": {
+                                    "mnemonic": "",
+                                    "version": -1
+                                },
+                                "privacy": "Undefined",
+                                "productModes": [
+                                ],
+                                "regionId": "EU",
+                                "session": {
+                                    "iD": "",
+                                    "joinInfo": {
+                                        "joinability": "CanNotBeJoinedOrWatched",
+                                        "sessionKey": ""
+                                    }
+                                },
+                                "world": {
+                                    "bIsJoinable": False,
+                                    "iD": "",
+                                    "name": "",
+                                    "ownerId": "INVALID"
+                                }
+                            },
+                            "matchmakingId": uuid.uuid4().hex.upper(),
+                            "timestamp": 0
+                        },
+                        "islandSelection": {
+                            "bUsingGracefulUpgrade": False,
+                            "island": {
+                                "linkId": {
+                                    "mnemonic": "playlist_showdown_cts_" + suffix,
+                                    "version": -1
+                                },
+                                "privacy": "NoFill",
+                                "productModes": [
+                                ],
+                                "regionId": "EU",
+                                "session": {
+                                    "iD": "",
+                                    "joinInfo": {
+                                        "joinability": "CanNotBeJoinedOrWatched",
+                                        "sessionKey": ""
+                                    }
+                                },
+                                "world": {
+                                    "bIsJoinable": False,
+                                    "iD": "",
+                                    "name": "",
+                                    "ownerId": "INVALID"
+                                }
+                            },
+                            "matchmakingId": uuid.uuid4().hex.upper(),
+                            "timestamp": int(time.time())
+                        },
+                        "maxMatchmakingDelay": 0,
+                        "playlistVersion": 0,
+                        "readyStatus": "NotReady",
+                        "travelId": "",
+                        "worldSessionId": ""
+                    }
+                })
+                }
+                await self.party.me.patch(patch)
                 # max=30 because 30 is the maximum amount of props that
                 # can be updated at once.
                 await self.patch(max=30)
@@ -3730,7 +3807,7 @@ class ClientParty(PartyBase, Patchable):
         if perm == 'Noone' or (perm == 'Leader' and (self.me is not None
                                                      and not self.me.leader)):
             join_data = {
-                'bInPrivate': True
+                'bIsPrivate': True
             }
         else:
             join_data = {
@@ -3742,44 +3819,52 @@ class ClientParty(PartyBase, Patchable):
                 'key': 'k',
                 'appId': 'Fortnite',
                 'buildId': self.client.party_build_id,
-                'partyFlags': -2024557306,
+                'partyFlags': 6,
                 'notAcceptingReason': 0,
                 'pc': self.member_count,
             }
 
         status = text or self.client.status
 
+        if len(self._members) == 1:
+            suffix = "Solo"
+        elif len(self._members) == 2:
+            suffix = "Duos"
+        elif len(self._members) == 3:
+            suffix = "Trios"
+        else:
+            suffix = "Squads"
+
         _default_status = {
-            'Status': status.format(party_size=self.member_count,
-                                    party_max_size=self.max_size,
-                                    current_playlist=self.client.
-                                    current_status_playlist),
-            'bIsPlaying': False,
-            'bIsJoinable': False,
-            'bHasVoiceSupport': False,
-            'SessionId': '',
-            'ProductName': 'Fortnite',
-            'Properties': {
-                'party.joininfodata.286331153_j': join_data,
-                'FortBasicInfo_j': {
-                    'homeBaseRating': 1,
+                "bHasVoiceSupport": False,
+                "bIsJoinable": False,
+                "bIsPlaying": False,
+                "ProductName": "Fortnite",
+                "Properties": {
+                    "FortBasicInfo_j": {
+                        "homeBaseRating": 0
+                    },
+                    "FortGameplayStats_j": {
+                        "bFellToDeath": False,
+                        "numKills": 0,
+                        "playlist": "None",
+                        "state": ""
+                    },
+                    "FortLFG_I": "0",
+                    "FortPartySize_i": 1,
+                    "FortSubGame_i": 1,
+                    "InUnjoinableMatch_b": False,
+                    "IsInZone_b": False,
+                    "IslandCode_s": "playlist_showdown_cts_"  + suffix.lower(),
+                    "party.joininfodata.286331153_j": join_data,
+                    "SocialStatus_j": {
+                        "attendingSocialEventIds": [
+                        ]
+                    }
                 },
-                'FortLFG_I': '0',
-                'FortPartySize_i': 1,
-                'FortSubGame_i': 1,
-                'InUnjoinableMatch_b': False,
-                'FortGameplayStats_j': {
-                    'state': '',
-                    'playlist': 'None',
-                    'numKills': 0,
-                    'bFellToDeath': False,
-                },
-                'GamePlaylistName_s': self.meta.playlist_info[0],
-                'Event_PlayersAlive_s': '0',
-                'Event_PartySize_s': str(len(self._members)),
-                'Event_PartyMaxSize_s': str(self.max_size),
-            },
-        }
+                "SessionId": "",
+                "Status": "Battle Royale: Tournament Settings - " + suffix
+            }
         return _default_status
 
     def update_presence(self, text: Optional[str] = None) -> None:

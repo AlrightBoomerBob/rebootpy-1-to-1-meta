@@ -39,7 +39,7 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Optional, Union, Awaitable, Any, Tuple
 from .errors import HTTPException
 from .party import (Party, PartyJoinRequest, ReceivedPartyInvitation,
-                    PartyJoinConfirmation)
+                    PartyJoinConfirmation, PlaylistRequest)
 from .presence import Presence
 from .enums import AwayStatus
 from .utils import to_iso, from_iso
@@ -1249,6 +1249,28 @@ class XMPPClient:
                     except KeyError:
                         pass
 
+        if (body.get('member_state_updated').get('Default:SuggestedIsland_j')
+                and party.me.leader):
+            island_raw = json.loads(
+                body['member_state_updated']['Default:SuggestedIsland_j']
+            )
+
+            if island_raw['SuggestedIsland']['linkId']['mnemonic']:
+                request = PlaylistRequest(
+                    client=self.client,
+                    party=party,
+                    member=member,
+                    raw_suggestion=island_raw['SuggestedIsland']
+                )
+
+                if not self.client._event_has_destination(
+                    'party_playlist_request'
+                ):
+                    await request.accept()
+                else:
+                    self.client.dispatch_event('party_playlist_request',
+                                               request)
+
         self.client.dispatch_event('party_member_update', member)
 
         # Only dispatch the events below if the update is not the initial
@@ -1573,6 +1595,8 @@ class XMPPClient:
             self.xmpp_client.presence = aioxmpp.PresenceState(available=True)
 
         _status = status if isinstance(status, dict) else {'Status': status}
+        with open("debugg.txt", "w") as f:
+            f.write(json.dumps(_status))
         self.xmpp_client.set_presence(
             state=aioxmpp.PresenceState(
                 available=True,

@@ -419,11 +419,6 @@ class ExchangeCodeAuth(Auth):
     fortnite_token: Optional[:class:`str`]
         The fortnite token to use with authentication. You should generally
         not need to set this manually.
-
-    Attributes
-    ----------
-    authorization: :class:`str`
-        The Authorization header for use with Fortnite endpoints, use this if you're making HTTP requests that aren't already implemented.
     """
     def __init__(self, code: StrOrMaybeCoro,
                  **kwargs: Any) -> None:
@@ -524,11 +519,6 @@ class AuthorizationCodeAuth(ExchangeCodeAuth):
     fortnite_token: Optional[:class:`str`]
         The fortnite token to use with authentication. You should generally
         not need to set this manually.
-
-    Attributes
-    ----------
-    authorization: :class:`str`
-        The Authorization header for use with Fortnite endpoints, use this if you're making HTTP requests that aren't already implemented.
     """
     def __init__(self, code: StrOrMaybeCoro,
                  **kwargs: Any) -> None:
@@ -585,11 +575,6 @@ class DeviceAuth(Auth):
     fortnite_token: Optional[:class:`str`]
         The fortnite token to use with authentication. You should generally
         not need to set this manually.
-
-    Attributes
-    ----------
-    authorization: :class:`str`
-        The Authorization header for use with Fortnite endpoints, use this if you're making HTTP requests that aren't already implemented.
     """
     def __init__(self, device_id: str,
                  account_id: str,
@@ -691,11 +676,6 @@ class RefreshTokenAuth(Auth):
     ----------
     refresh_token: :class:`str`
         A valid launcher refresh token.
-
-    Attributes
-    ----------
-    authorization: :class:`str`
-        The Authorization header for use with Fortnite endpoints, use this if you're making HTTP requests that aren't already implemented.
     """
     def __init__(self, refresh_token: str,
                  **kwargs: Any) -> None:
@@ -828,11 +808,6 @@ class AdvancedAuth(Auth):
     fortnite_token: Optional[:class:`str`]
         The fortnite token to use with authentication. You should generally
         not need to set this manually.
-
-    Attributes
-    ----------
-    authorization: :class:`str`
-        The Authorization header for use with Fortnite endpoints, use this if you're making HTTP requests that aren't already implemented.
     """
     def __init__(self,
                  exchange_code: Optional[StrOrMaybeCoro] = None,
@@ -1099,11 +1074,6 @@ class DeviceCodeAuth(Auth):
     fortnite_token: Optional[:class:`str`]
         The fortnite token to use with authentication. You should generally
         not need to set this manually.
-
-    Attributes
-    ----------
-    authorization: :class:`str`
-        The Authorization header for use with Fortnite endpoints, use this if you're making HTTP requests that aren't already implemented.
     """
     def __init__(self, open_link_in_browser: bool = True,
                  **kwargs: Any) -> None:
