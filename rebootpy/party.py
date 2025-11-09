@@ -576,6 +576,7 @@ class PartyMemberMeta(MetaBase):
         self.has_been_updated = True
 
         self.def_character = DefaultCharactersChapter3.get_random_name()
+        self.def_character = 'CID_530_Athena_Commando_F_BlackMonday_1BV6J'
 
         self.schema = {
             "Default:ArbitraryCustomDataStore_j": json.dumps({
@@ -583,14 +584,24 @@ class PartyMemberMeta(MetaBase):
             }),
             "Default:AthenaBannerInfo_j": json.dumps({
                 "AthenaBannerInfo": {
-                    "bannerIconId": "standardbanner15",
-                    "bannerColorId": "defaultcolor15",
-                    "seasonLevel": 1
+                    "bannerIconId": "StandardBanner2",
+                    "bannerColorId": "DefaultColor2",
+                    "seasonLevel": 47
                 }
             }),
             "Default:AthenaCosmeticLoadoutVariants_j": json.dumps({
                 "AthenaCosmeticLoadoutVariants": {
-                    "vL": {},
+                    "vL": {
+                        "athenaCharacter": {
+                            "i": [
+                                {
+                                    "c": "Parts",
+                                    "dE": 0,
+                                    "v": "Stage1"
+                                }
+                            ]
+                        }
+                        },
                     "vD": {},
                     "fT": False
                 }
@@ -601,15 +612,36 @@ class PartyMemberMeta(MetaBase):
                     "characterEKey": "",
                     "backpackDef": "None",
                     "backpackEKey": "",
-                    "pickaxeDef": "/Game/Athena/Items/Cosmetics/Pickaxes/DefaultPickaxe.DefaultPickaxe",
+                    "pickaxeDef": "/BRCosmetics/Athena/Items/Cosmetics/Pickaxes/Pickaxe_ID_749_GimmickMale_5C033.Pickaxe_ID_749_GimmickMale_5C033",
                     "pickaxeEKey": "",
-                    "randomDefaultCosmeticHash": 57434612,
+                    "randomDefaultCosmeticHash": 448602210,
                     "contrailDef": "/Game/Athena/Items/Cosmetics/Contrails/DefaultContrail.DefaultContrail",
                     "contrailEKey": "",
                     "shoesDef": "None",
                     "shoesEKey": "",
                     "scratchpad": [],
-                    "cosmeticStats": [],
+                    "cosmeticStats": [
+                        {
+                            "statName": "HabaneroProgression",
+                            "statValue": 7
+                        },
+                        {
+                            "statName": "HabaneroS31",
+                            "statValue": 17
+                        },
+                        {
+                            "statName": "TotalVictoryCrowns",
+                            "statValue": 3
+                        },
+                        {
+                            "statName": "TotalRoyalRoyales",
+                            "statValue": 1
+                        },
+                        {
+                            "statName": "HasCrown",
+                            "statValue": 0
+                        }
+                    ],
                     "mimosaDef": "None",
                     "mimosaEKey": ""
                 }
@@ -617,15 +649,14 @@ class PartyMemberMeta(MetaBase):
             "Default:BattlePassInfo_j": json.dumps({
                 "BattlePassInfo": {
                     "bHasPurchasedPass": False,
-                    "passLevel": 1
+                    "passLevel": 47
                 }
             }),
             "Default:bIsPartyUsingPartySignal_b": "false",
             "Default:CampaignHero_j": json.dumps({
                 "CampaignHero": {
                     "heroItemInstanceId": "",
-                    "heroType": ("/Game/Athena/Heroes/{0}.{0}"
-                                 "".format(self.def_character.replace("CID","HID")))
+                    "heroType": "/Game/Athena/Heroes/HID_001_Athena_Commando_F.HID_001_Athena_Commando_F"
                 }
             }),
             "Default:CampaignInfo_j": json.dumps({
@@ -677,7 +708,8 @@ class PartyMemberMeta(MetaBase):
             }),
             "Default:FrontendMimosa_j": json.dumps({
               "FrontendMimosa": {
-                "frontendMimosaEnum": "None"
+                "frontendMimosaAnimType": "None",
+                "frontendMimosaInstanceId": ""
               }
             }),
             "Default:JoinInProgressData_j": json.dumps({
