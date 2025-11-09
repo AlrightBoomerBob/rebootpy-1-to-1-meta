@@ -745,7 +745,7 @@ class PartyMemberMeta(MetaBase):
                     "subGame": "Athena",
                     "location": "PreLobby",
                     "gameMode": "None",
-                    "voiceChatStatus": "Enabled",
+                    "voiceChatStatus": "Disabled",
                     "hasCompletedSTWTutorial": False,
                     "hasPurchasedSTW": False,
                     "platformSupportsSTW": True,
@@ -754,7 +754,7 @@ class PartyMemberMeta(MetaBase):
                     "bRecVoice": False,
                     "bRecText": False,
                     "bIsInAllSelectExperiment": False,
-                    "bAllowEmoteBeatSyncing": True,
+                    "bAllowEmoteBeatSyncing": False,
                     "eOSProductUserId": "0002b018a27f4414bc3ad4aa4b52f692",
                 }
             }),
@@ -852,35 +852,41 @@ class PartyMemberMeta(MetaBase):
                     "d": json.dumps({
                         "ag": {
                             "i": "AthenaGlider:Solo_Umbrella",
+                            "d": str(uuid.uuid4()),
                             "v": {
                             }
                         },
                         "sb": {
                             "i": "SparksBass:Sparks_Bass_Generic",
+                            "d": str(uuid.uuid4()),
                             "v": {
                                 "0": "0"
                             }
                         },
                         "sg": {
                             "i": "SparksGuitar:Sparks_Guitar_Generic",
+                            "d": str(uuid.uuid4()),
                             "v": {
                                 "0": "0"
                             }
                         },
                         "sd": {
                             "i": "SparksDrums:Sparks_Drum_Generic",
+                            "d": str(uuid.uuid4()),
                             "v": {
                                 "0": "0"
                             }
                         },
                         "sk": {
                             "i": "SparksKeyboard:Sparks_Keytar_Generic",
+                            "d": str(uuid.uuid4()),
                             "v": {
                                 "0": "0"
                             }
                         },
                         "sm": {
                             "i": "SparksMicrophone:Sparks_Mic_Generic",
+                            "d": str(uuid.uuid4()),
                             "v": {
                                 "0": "0"
                             }
@@ -1385,7 +1391,7 @@ class PartyMeta(MetaBase):
             "urn:epic:cfg:join-request-action_s": "Manual",
             "urn:epic:cfg:party-type-id_s": "default",
             "Default:CreativeInGameReadyCheckStatus_s": "None",
-            "Default:PreferredPrivacy_s": "Fill"
+            "Default:PreferredPrivacy_s": "Private"
         }
 
         if meta is not None:
